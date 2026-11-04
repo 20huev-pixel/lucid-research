@@ -223,5 +223,14 @@ function download(name,content,type){
 }
 render();
 </script>
+ <script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register(
+      "/lucid-research/service-worker.js"
+    );
+  });
+}
+</script>
 </body>
 </html>
