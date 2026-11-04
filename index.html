@@ -1,0 +1,222 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101827">
+<title>Lucid Research</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#101827;color:#edf2fa;font-family:Arial,sans-serif;padding:20px}
+main{max-width:600px;margin:auto}
+header{text-align:center;padding:25px 10px}
+h1{letter-spacing:3px;margin-bottom:5px}
+.sub{color:#9caec5;font-size:13px}
+.card{background:#1b293b;border:1px solid #35445a;border-radius:17px;padding:20px;margin:15px 0}
+h2{font-size:18px}
+button{border:0;border-radius:10px;padding:14px;font-weight:bold;font-size:15px;cursor:pointer}
+.primary{background:#6489df;color:white;width:100%}
+.secondary{background:#33445d;color:white;width:100%;margin-top:10px}
+textarea{width:100%;min-height:145px;background:#111e2e;border:1px solid #455873;border-radius:10px;padding:13px;color:white;font:inherit;resize:vertical}
+input{accent-color:#6489df}
+.muted{color:#9caec5;font-size:13px;line-height:1.5}
+.target{font-size:75px;text-align:center;padding:20px}
+.hidden{display:none}
+.entry{padding:13px 0;border-bottom:1px solid #35445a}
+.entry:last-child{border:0}
+.tag{color:#9db8f4;font-size:12px}
+footer{font-size:12px;color:#899bb2;line-height:1.5;padding:15px 0}
+</style>
+</head>
+<body>
+<main>
+<header>
+<h1>LUCID RESEARCH</h1>
+<div class="sub">EXPERIMENT 001 · DREAM DISCOVERY</div>
+</header>
+
+<section class="card">
+<div class="sub">AKTUELLER VERSUCH</div>
+<h2 id="status">Noch kein Versuch gestartet</h2>
+<div class="target" id="target">🔒</div>
+<p class="muted" id="targetInfo">Das Zielmotiv bleibt bis zur Abgabe verborgen.</p>
+<button class="primary" id="start">🎲 Neuen Versuch starten</button>
+</section>
+
+<section class="card hidden" id="diaryCard">
+<h2>Dein Traumprotokoll</h2>
+<p class="muted">Beschreibe deinen Traum möglichst vollständig. Notiere auch Farben, Formen, Gefühle und einzelne Eindrücke. Vermeide Vermutungen über das Zielbild.</p>
+<textarea id="diary" placeholder="Ich erinnere mich an ..."></textarea>
+<p class="muted" id="chars">0 Zeichen</p>
+<button class="primary" id="submit" disabled>Protokoll abgeben und Ziel aufdecken</button>
+</section>
+
+<section class="card hidden" id="revealCard">
+<h2>Dein Zielmotiv</h2>
+<div class="target" id="revealEmoji"></div>
+<h2 id="revealName" style="text-align:center"></h2>
+<p class="muted">Vergleiche dieses Motiv mit deinem ursprünglichen Traumprotokoll. Bewerte deine Eindrücke möglichst unvoreingenommen.</p>
+</section>
+
+<section class="card">
+<h2>Versuchsübersicht</h2>
+<p class="muted" id="count">0 Versuche dokumentiert</p>
+<div id="history" class="muted">Noch keine Einträge.</div>
+<button class="secondary" id="export">⬇ Daten als JSON exportieren</button>
+<button class="secondary" id="csv">⬇ Traumprotokolle als CSV exportieren</button>
+</section>
+
+<section class="card">
+<h2>Versuchshinweise</h2>
+<p class="muted">
+1. Starte einen neuen Versuch vor dem Schlafengehen.<br>
+2. Gehe schlafen und konzentriere dich auf dein unbekanntes Ziel.<br>
+3. Dokumentiere deinen Traum direkt nach dem Aufwachen.<br>
+4. Gib dein Protokoll ab, bevor du das Ziel aufdeckst.<br>
+5. Bewerte die Übereinstimmung erst nach der Dokumentation.
+</p>
+</section>
+
+<footer>
+Lucid Research · Experiment 001<br>
+Die Daten werden lokal in diesem Browser gespeichert. Exportiere regelmäßig eine Sicherung. Diese erste Version ist ein Forschungsprototyp, kein wissenschaftlich validiertes Messinstrument. Das Ziel ist technisch nicht gegen Einsicht in den Browsercode oder lokalen Speicher geschützt.
+</footer>
+</main>
+
+<script>
+const pool=[
+["🌋","Vulkan"],["🗼","Leuchtturm"],["🐘","Elefant"],
+["🌈","Regenbogen"],["🚂","Dampflokomotive"],["🏰","Burg"],
+["🦋","Schmetterling"],["🌵","Kaktus"],["🚀","Rakete"],
+["🐙","Oktopus"],["🎻","Geige"],["🗝️","Schlüssel"],
+["🌕","Vollmond"],["🦚","Pfau"],["⛵","Segelboot"],
+["🧊","Eiswürfel"],["🌻","Sonnenblume"],["🦉","Eule"],
+["🏔️","Berggipfel"],["⌛","Sanduhr"],["🎈","Luftballon"],
+["🐢","Schildkröte"],["🌊","Welle"],["💎","Diamant"],
+["🪞","Spiegel"],["🦩","Flamingo"],["🍄","Pilz"],
+["🎡","Riesenrad"],["🛸","UFO"],["🧭","Kompass"],
+["🐬","Delfin"],["🌳","Baum"],["🕯️","Kerze"],
+["🏜️","Wüste"],["🦜","Papagei"],["🎭","Theatermaske"],
+["🚲","Fahrrad"],["🌙","Mondsichel"],["🪁","Drachen"],
+["🐋","Wal"],["🪐","Saturn"],["🧱","Ziegelstein"],
+["🦔","Igel"],["⛲","Brunnen"],["🎹","Klavier"],
+["🌺","Blüte"],["🏝️","Insel"],["🪶","Feder"],
+["🦀","Krabbe"],["🔔","Glocke"],["🐫","Kamel"],
+["🌌","Sternenhimmel"],["🛶","Kanu"],["🧸","Teddybär"],
+["🪸","Koralle"],["🦖","Dinosaurier"],["🪜","Leiter"],
+["🎪","Zirkuszelt"],["🍉","Wassermelone"],["🦓","Zebra"],
+["🏺","Vase"],["🌪️","Wirbelsturm"],["🪷","Seerose"],
+["🚁","Hubschrauber"],["🐝","Biene"],["🛤️","Bahngleis"],
+["🪨","Felsbrocken"],["🎯","Zielscheibe"],["🛎️","Hotelglocke"],
+["🪵","Holzscheit"],["🦒","Giraffe"],["🎠","Karussell"],
+["🧪","Reagenzglas"],["🪼","Qualle"],["🏮","Laterne"],
+["🐧","Pinguin"],["🪟","Fenster"],["🌉","Brücke"],
+["🎺","Trompete"],["🦥","Faultier"],["🛟","Rettungsring"],
+["🌾","Getreidefeld"],["🚢","Schiff"],["🪺","Vogelnest"],
+["🦎","Eidechse"],["🕰️","Standuhr"],["🏛️","Tempel"],
+["🪄","Zauberstab"],["🦢","Schwan"],["🌠","Sternschnuppe"],
+["🧵","Garnrolle"],["🗿","Steinstatue"],["🪻","Lavendel"],
+["🐚","Muschel"]
+];
+
+const KEY="lucidResearchDataV2";
+let data={history:[],active:null};
+try{
+ const saved=localStorage.getItem(KEY);
+ if(saved)data=JSON.parse(saved);
+}catch(e){}
+
+const $=id=>document.getElementById(id);
+const save=()=>localStorage.setItem(KEY,JSON.stringify(data));
+const stamp=()=>new Date().toLocaleString("de-DE");
+
+function render(){
+ const a=data.active;
+ $("start").classList.toggle("hidden",!!a);
+ $("diaryCard").classList.toggle("hidden",!a||a.submitted);
+ $("revealCard").classList.toggle("hidden",!a||!a.submitted);
+
+ $("status").textContent=!a?"Noch kein Versuch gestartet":
+ a.submitted?"Versuch abgeschlossen":"Ziel wurde gezogen · verborgen";
+
+ $("target").textContent=!a?"🔒":a.submitted?a.emoji:"🔒";
+ $("targetInfo").textContent=!a?
+ "Das Zielmotiv bleibt bis zur Abgabe verborgen.":
+ a.submitted?"Ziel: "+a.name:"Zielauswahl am "+a.started;
+
+ if(a&&a.submitted){
+  $("revealEmoji").textContent=a.emoji;
+  $("revealName").textContent=a.name;
+ }
+ $("count").textContent=data.history.length+" Versuche dokumentiert";
+ $("history").innerHTML=data.history.length?
+ data.history.slice().reverse().map(h=>
+ `<div class="entry"><div>${h.emoji} <strong>${escapeHTML(h.name)}</strong></div>
+ <div class="tag">${escapeHTML(h.date)} · ${h.text.length} Zeichen</div></div>`
+ ).join(""):"Noch keine Einträge.";
+ if(a&&!a.submitted)$("diary").value=a.draft||"";
+ updateSubmit();
+}
+function escapeHTML(s){
+ return String(s).replace(/[&<>"']/g,c=>({
+ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ })[c]);
+}
+function updateSubmit(){
+ $("chars").textContent=$("diary").value.length+" Zeichen";
+ $("submit").disabled=!$("diary").value.trim();
+}
+$("start").onclick=()=>{
+ if(data.active&&!data.active.submitted)return;
+ const n=crypto.getRandomValues(new Uint32Array(1))[0]%pool.length;
+ const t=pool[n];
+ data.active={
+  id:crypto.randomUUID(),
+  started:stamp(),
+  emoji:t[0],
+  name:t[1],
+  draft:"",
+  submitted:false
+ };
+ save();render();
+};
+$("diary").oninput=()=>{
+ if(!data.active||data.active.submitted)return;
+ data.active.draft=$("diary").value;
+ save();updateSubmit();
+};
+$("submit").onclick=()=>{
+ const a=data.active;
+ if(!a||a.submitted||!a.draft.trim())return;
+ a.submitted=true;
+ a.finished=stamp();
+ data.history.push({
+  id:a.id,date:a.started,finished:a.finished,
+  emoji:a.emoji,name:a.name,text:a.draft
+ });
+ save();render();
+};
+$("export").onclick=()=>{
+ download("lucid-research-backup.json",
+ JSON.stringify(data,null,2),"application/json");
+};
+$("csv").onclick=()=>{
+ const rows=[["Datum","Ziel","Motiv","Traumprotokoll"]];
+ data.history.forEach(h=>rows.push([
+ h.date,h.name,h.emoji,h.text
+ ]));
+ const csv=rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(";")).join("\n");
+ download("lucid-research-traeume.csv","\uFEFF"+csv,"text/csv;charset=utf-8");
+};
+function download(name,content,type){
+ const blob=new Blob([content],{type});
+ const url=URL.createObjectURL(blob);
+ const link=document.createElement("a");
+ link.href=url;link.download=name;link.click();
+ URL.revokeObjectURL(url);
+}
+render();
+</script>
+</body>
+</html>
