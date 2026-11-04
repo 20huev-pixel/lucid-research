@@ -139,7 +139,7 @@ const stamp=()=>new Date().toLocaleString("de-DE");
 
 function render(){
  const a=data.active;
- $("start").classList.toggle("hidden",!!a);
+ $("start").classList.toggle("hidden", !!a && !a.submitted);
  $("diaryCard").classList.toggle("hidden",!a||a.submitted);
  $("revealCard").classList.toggle("hidden",!a||!a.submitted);
 
