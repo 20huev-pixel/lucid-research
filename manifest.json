@@ -4,42 +4,24 @@
   "name": "LUCID RESEARCH",
   "short_name": "LUCID",
   "description": "Dream Discovery – Personal Research App",
-
   "start_url": "/lucid-research/",
   "scope": "/lucid-research/",
-
   "display": "standalone",
   "orientation": "portrait",
-
   "background_color": "#101014",
   "theme_color": "#101014",
-
   "icons": [
     {
-      "src": "/lucid-research/icons/icon-192.png",
+      "src": "/lucid-research/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/lucid-research/icons/icon-512.png",
+      "src": "/lucid-research/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
-    }
-  ],
-
-  "screenshots": [
-    {
-      "src": "/lucid-research/screenshots/desktop.png",
-      "sizes": "1280x800",
-      "type": "image/png",
-      "form_factor": "wide"
-    },
-    {
-      "src": "/lucid-research/screenshots/mobile.png",
-      "sizes": "390x844",
-      "type": "image/png"
     }
   ]
 }
